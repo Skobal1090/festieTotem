@@ -3,8 +3,6 @@
 #include <unistd.h>
 using namespace std;
 
-
-
 void printToScreen(){
     int f = 0;
     int seconds = 0;
@@ -38,8 +36,8 @@ void printToScreen(){
         for (int x = 0; x < rows; x ++){
             for (int y = 0; y < cols; y ++){
                 (f % cols == y) ? buffer[x][y] = '*': buffer[x][y] = ' ';
+            }
         }
-    }
 
         //usleep takes microseconds as an argument, we chose a refresh rate of 5hz
         usleep(50000);
