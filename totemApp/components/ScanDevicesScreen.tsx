@@ -28,11 +28,12 @@ import BleManager, {
   BleScanMatchMode,
   BleScanMode,
   Peripheral,
+  ScanOptions
 } from 'react-native-ble-manager';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const SECONDS_TO_SCAN_FOR = 3;
-const SERVICE_UUIDS: string[] = [];
+const SECONDS_TO_SCAN_FOR = 10;
+const SERVICE_UUIDS: string[] = ["6364e354-24f2-4048-881f-4943362d34d7"];
 const ALLOW_DUPLICATES = true;
 
 const BleManagerModule = NativeModules.BleManager;

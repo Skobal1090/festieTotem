@@ -11,7 +11,7 @@ export type RootStackParamList = {
   PeripheralDetails: { peripheralData: PeripheralInfo };
 };
 
-export function App() {
+export default function App() {
   return (
     <NavigationContainer>
         <Stack.Navigator>
