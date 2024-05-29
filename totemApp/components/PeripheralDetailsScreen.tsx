@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import {Peripheral, PeripheralInfo} from 'react-native-ble-manager';
+import React, { useState } from 'react';
+import {View, Text, TextInput, StyleSheet, ScrollView, Button} from 'react-native';
+import BleManager, {Peripheral, PeripheralInfo} from 'react-native-ble-manager';
 import { RootStackParamList } from '../App';
+import { Buffer } from "buffer";
 
 // Define interfaces for your peripheral's properties
 interface Characteristic {
@@ -28,9 +29,13 @@ interface PeripheralDetailsProps {
 type Props = NativeStackScreenProps<RootStackParamList, 'PeripheralDetails'>;
 
 const PeripheralDetailsScreen = ({navigation, route}: Props) => {
+  const [totemText, setTotemText] = useState("");
   const peripheralData = route.params.peripheralData;
-  console.log('peripheralData:', JSON.stringify(peripheralData, null, 2));
 
+  const writeData = (text : string): void => {
+    const buffer = Buffer.from(text);
+    BleManager.write(peripheralData.id, "6364e354-24f2-4048-881f-4943362d34d7", "7504932b-317e-4bb8-9998-5d2f5f3d18b3", buffer.toJSON().data);
+  };
   // Function to render characteristics for a given service
   const renderCharacteristicsForService = (serviceUUID: string) => {
     const characteristics = peripheralData.characteristics ?? [];
@@ -47,39 +52,10 @@ const PeripheralDetailsScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <ScrollView
-      style={styles.scrollViewStyle}
-      contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Peripheral Details</Text>
-      <Text style={styles.detail}>name: {peripheralData.name}</Text>
-      <Text style={styles.detail}>id: {peripheralData.id}</Text>
-      <Text style={styles.detail}>rssi: {peripheralData.rssi}</Text>
-
-      <Text style={[styles.title, styles.titleWithMargin]}>Advertising</Text>
-      <Text style={styles.detail}>
-        localName: {peripheralData.advertising.localName}
-      </Text>
-      <Text style={styles.detail}>
-        txPowerLevel: {peripheralData.advertising.txPowerLevel}
-      </Text>
-      <Text style={styles.detail}>
-        isConnectable:{' '}
-        {peripheralData.advertising.isConnectable ? 'true' : 'false'}
-      </Text>
-      <Text style={styles.detail}>
-        serviceUUIDs: {peripheralData.advertising.serviceUUIDs}
-      </Text>
-
-      <Text style={[styles.title, styles.titleWithMargin]}>
-        Services && Characteristics
-      </Text>
-      {peripheralData.services?.map((service, index) => (
-        <View key={index} style={styles.serviceContainer}>
-          <Text style={styles.serviceTitle}>Service: {service.uuid}</Text>
-          {renderCharacteristicsForService(service.uuid)}
-        </View>
-      ))}
-    </ScrollView>
+    <View>
+      <TextInput placeholder='Say it wit yo chest' value={totemText} onChangeText={text => setTotemText(text)}/>
+      <Button title="Let the people know" onPress={() => writeData(totemText)}/>
+    </View>
   );
 };
 
@@ -112,6 +88,7 @@ const styles = StyleSheet.create({
   },
   scrollViewStyle: {
     flex: 1,
+    backgroundColor: '#069400'
   },
   contentContainer: {
     padding: 20,
