@@ -23,6 +23,19 @@ void setup() {
   matrix.setTextWrap(false);
   matrix.setBrightness(10);
   randomSeed(analogRead(0));
+  Serial.begin(9600);
+}
+
+void display_freeram() {
+  Serial.print(F("- SRAM left: "));
+  Serial.println(freeRam());
+}
+
+int freeRam() {
+  extern int __heap_start,*__brkval;
+  int v;
+  return (int)&v - (__brkval == 0  
+    ? (int)&__heap_start : (int) __brkval);  
 }
 
 int x    = matrix.width();
