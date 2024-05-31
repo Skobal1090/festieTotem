@@ -1,5 +1,6 @@
 #ifndef _COLOR_INTERPOLATOR_H
 #define _COLOR_INTERPOLATOR_H
+#include "colorProvider.h"
 
 typedef struct {
     double r;       // a fraction between 0 and 1
@@ -13,10 +14,12 @@ typedef struct {
     double v;       // a fraction between 0 and 1
 } hsv;
 
-class ColorInterpolator{
+class ColorInterpolator : public ColorProvider{
     public:
+      // Takes in color1, color2 in RGB format
       ColorInterpolator(double* color1, double* color2);
-      double* getColor();
+      // getColor() returns the color value in RGB format
+      virtual double* getColor();
     private:
       hsv startColor;
       hsv endColor;
