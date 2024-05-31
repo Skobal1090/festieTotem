@@ -4,10 +4,8 @@
 
 class SolidColorProvider : public ColorProvider{
   public:
-    SolidColorProvider(double* inputColor);
-    virtual double* getColor();
-  private:
-    //double inputColor[3];
+    SolidColorProvider(uint8_t* inputColor);
+    virtual uint8_t* getColor();
 };
 
 #endif

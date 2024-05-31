@@ -107,35 +107,35 @@ rgb ColorInterpolator::hsv2rgb(hsv in)
 
 hsv startColor;
 hsv endColor;
-double t;
+uint8_t t;
 
-ColorInterpolator::ColorInterpolator(double* color1, double* color2){
+ColorInterpolator::ColorInterpolator(uint8_t* color1, uint8_t* color2){
   startColor = rgb2hsv((rgb){color1[0], color1[1], color1[2]});
   endColor = rgb2hsv((rgb){color2[0], color2[1], color2[2]});
   t = 0.0;
 }
 
-double ColorInterpolator::interpolateLinearly(double a, double b, double t){
-  return a * (1 - t) + b * t;
+uint8_t ColorInterpolator::interpolateLinearly(uint8_t a, uint8_t b, uint8_t t){
+  return a * (1 - (t * 0.01)) + b * (t * 0.01);
 }
 
-double* ColorInterpolator::getColor(){
-  static double color[3];
+uint8_t* ColorInterpolator::getColor(){
+  static uint8_t color[3];
   hsv result;
 
   result.h = interpolateLinearly(startColor.h, endColor.h, t);
   result.s = interpolateLinearly(startColor.s, endColor.s, t);
   result.v = interpolateLinearly(startColor.v, endColor.v, t);
 
-  t += 0.01;
+  t += 1;
   
   // if we've reached the end goal, the colors now flip and t resets
-  if(1.0 - t < 0.00001){
+  if(t >= 100){
     hsv tmp = endColor;
     endColor = startColor;
     startColor = tmp;
 
-    t = 0.0;
+    t = 0;
   }
 
   rgb conv = hsv2rgb(result);

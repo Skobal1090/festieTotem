@@ -15,9 +15,9 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(16, 16, PIN,
   NEO_MATRIX_COLUMNS + NEO_MATRIX_ZIGZAG,
   NEO_GRB            + NEO_KHZ800);
 
-double start[] = { 0.0, 255.0, 0.0 };
-double finish[] = { 255.0, 0.0, 0.0 };
-double solidColor[] = { 0.0, 0.0, 255.0 };
+uint8_t start[] = { 0.0, 255.0, 0.0 };
+uint8_t finish[] = { 255.0, 0.0, 0.0 };
+uint8_t solidColor[] = { 0.0, 0.0, 255.0 };
 
 ColorProvider* provider;
 
@@ -60,7 +60,7 @@ void loop() {
   matrix.fillScreen(0);
   matrix.setCursor(x,3);
   matrix.print(inputText);
-  double* currColor = provider->getColor();
+  uint8_t* currColor = provider->getColor();
   matrix.setTextColor(matrix.Color(currColor[0], currColor[1], currColor[2]));
   matrix.show();
   delay(50);
