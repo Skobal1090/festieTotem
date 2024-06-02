@@ -4,6 +4,8 @@
 #include "colorInterpolator.h"
 #include "solidColorProvider.h"
 #include "colorProvider.h"
+#include "randomColorProvider.h"
+#include "twoColorSwapProvider.h"
 #ifndef PSTR
  #define PSTR // Make Arduino Due happy
 #endif
@@ -27,13 +29,19 @@ void setup() {
   matrix.setBrightness(10);
   randomSeed(analogRead(0));
   Serial.begin(9600);
-  int selectedColor = random(0,2);
+  int selectedColor = 3 ;//random(0,2);
   switch(selectedColor) {
     case 0: 
       provider = new ColorInterpolator(start,finish);
       break;
     case 1: 
       provider = new SolidColorProvider(solidColor);
+      break;
+    case 2:
+      provider = new RandomColorProvider();
+      break;
+    case 3:
+      provider = new TwoColorSwapProvider(start,finish);
       break;
   }
 }
@@ -54,12 +62,13 @@ int x    = matrix.width();
 int pass = 0;
 
 int target = 1;
-String inputText = "Hello :)";
+String inputText = "This randomly breaks sometimes. I don't know why.";
 
 void loop() {
   matrix.fillScreen(0);
   matrix.setCursor(x,3);
   matrix.print(inputText);
+  display_freeram();
   uint8_t* currColor = provider->getColor();
   matrix.setTextColor(matrix.Color(currColor[0], currColor[1], currColor[2]));
   matrix.show();

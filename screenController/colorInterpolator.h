@@ -23,7 +23,6 @@ class ColorInterpolator : public ColorProvider{
     private:
       hsv startColor;
       hsv endColor;
-      uint8_t t;
       hsv rgb2hsv(rgb in);
       rgb hsv2rgb(hsv in);
       uint8_t interpolateLinearly(uint8_t a, uint8_t b, uint8_t t);
