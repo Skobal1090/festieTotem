@@ -107,7 +107,7 @@ rgb ColorInterpolator::hsv2rgb(hsv in)
 
 hsv startColor;
 hsv endColor;
-uint8_t t;
+static uint8_t t;
 
 ColorInterpolator::ColorInterpolator(uint8_t* color1, uint8_t* color2){
   startColor = rgb2hsv((rgb){color1[0], color1[1], color1[2]});

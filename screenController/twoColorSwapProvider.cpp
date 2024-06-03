@@ -1,18 +1,23 @@
 #include "twoColorSwapProvider.h"
+#include "Arduino.h"
 
+static uint8_t* colors[2];
 TwoColorSwapProvider::TwoColorSwapProvider(uint8_t* color1, uint8_t* color2){
-  uint8_t* colorArray[2] = {color1, color2}; //contains both colors
+  colors[0] = color1;
+  colors[1] = color2;
 }
 
-bool selectedColor = 0;
-uint8_t tcst; //two color swap time
+int selectedColor = 0;
+static uint8_t t;
 
 uint8_t* TwoColorSwapProvider::getColor(){
 
-  tcst += 1;
-  if (tcst >= 20){
-    selectedColor = !selectedColor;
-    tcst = 0;
+  t += 1;
+  if (t >= 20){
+    selectedColor = (selectedColor + 1) % 2;
+    t = 0;
   }
-  return colorArray[selectedColor];
+  
+
+  return colors[selectedColor];
 }

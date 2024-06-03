@@ -24,12 +24,13 @@ uint8_t solidColor[] = { 0.0, 0.0, 255.0 };
 ColorProvider* provider;
 
 void setup() {
+  Serial.begin(9600);
+  while(!Serial);
   matrix.begin();
   matrix.setTextWrap(false);
   matrix.setBrightness(10);
   randomSeed(analogRead(0));
-  Serial.begin(9600);
-  int selectedColor = 3 ;//random(0,2);
+  int selectedColor = 3;//random(0,2);
   switch(selectedColor) {
     case 0: 
       provider = new ColorInterpolator(start,finish);
@@ -62,13 +63,12 @@ int x    = matrix.width();
 int pass = 0;
 
 int target = 1;
-String inputText = "This randomly breaks sometimes. I don't know why.";
+String inputText = "This randomly breaks";
 
 void loop() {
   matrix.fillScreen(0);
   matrix.setCursor(x,3);
   matrix.print(inputText);
-  display_freeram();
   uint8_t* currColor = provider->getColor();
   matrix.setTextColor(matrix.Color(currColor[0], currColor[1], currColor[2]));
   matrix.show();
