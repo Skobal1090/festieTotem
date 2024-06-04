@@ -1,20 +1,6 @@
 #include "Arduino.h"
 #include <stdint.h>
 
-class ConnectionListener {
-  public:
-    ConnectionListener(void (&onConnected)(), void (&onDisconnected)(), void (&onScanStarted)());
-    void onConnected();
-    void onDisconnected();
-    void onScanStarted();
-};
-
-class TextUpdatedListener {
-  public:
-    TextUpdatedListener(void (&onTextUpdated)(String));
-    void onTextUpdated(String newText);
-};
-
 class Attributes {
   public:
     Attributes(String parms) {}
@@ -24,17 +10,11 @@ class Attributes {
     uint8_t* colors;
 };
 
-class AttributesUpdatedListener {
-  public:
-    AttributesUpdatedListener(void (&onAttributesUpdated)(Attributes));
-    void onAttributesUpdated(Attributes newVals);
-};
-
 class BleManager {
   public:
     void init();
     void scan();
-    void setConnectionListener(ConnectionListener* listener);
-    void setTextUpdatedListener(TextUpdatedListener* listener);
-    void setAttributesUpdatedListener(AttributesUpdatedListener* listener);
+    void setConnectionListener(void (&onConnected)(), void (&onDisconnected)(), void (&onScanStarted)());
+    void setTextUpdatedListener(void (&onTextUpdated)(String));
+    void setAttributesUpdatedListener(void (&onAttributesUpdated)(Attributes));
 };
