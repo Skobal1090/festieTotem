@@ -32,8 +32,7 @@ class AttributesUpdatedListener {
 
 class BleManager {
   public:
-    BleManager();
-    void begin();
+    void init();
     void scan();
     void setConnectionListener(ConnectionListener* listener);
     void setTextUpdatedListener(TextUpdatedListener* listener);
