@@ -7,16 +7,18 @@ static BLEService totemService("6364e354-24f2-4048-881f-4943362d34d7"); // creat
 static BLEStringCharacteristic textCharacteristic("7504932b-317e-4bb8-9998-5d2f5f3d18b3", BLERead | BLEWrite, 512);
 static BLEStringCharacteristic colorCharacteristic("0a704fd3-5dba-4194-9f40-ac8e2ab4ff06", BLERead | BLEWrite, 512);
 
-static ConnectionListener* connectionListener;
-static AttributesUpdatedListener* attributesListener;
-static TextUpdatedListener* textListener;
+static void (*onConnected)();
+static void (*onDisconnected)();
+static void (*onScanStarted)();
+static void (*onAttributesUpdated)(Attributes);
+static void (*onTextUpdated)(String);
 
 void connectionHandler(BLEDevice central) {
   Serial.print("Connected event, central: ");
   Serial.println(central.address());
 
-  if(connectionListener != NULL){
-    connectionListener->onConnected();
+  if(onConnected != NULL){
+    onConnected();
   }
 }
 
@@ -24,8 +26,8 @@ void disconnectionHandler(BLEDevice central) {
   Serial.print("Disconnected event, central: ");
   Serial.println(central.address());
 
-  if(connectionListener != NULL){
-    connectionListener->onDisconnected();
+  if(onDisconnected != NULL){
+    onDisconnected();
   }
 }
 
@@ -33,8 +35,8 @@ void textCharacteristicWritten(BLEDevice central, BLECharacteristic characterist
   String val = textCharacteristic.value();
   Serial.print("Text Characteristic event, written: " + val);
 
-  if(textListener != NULL){
-    textListener->onTextUpdated(val);
+  if(onTextUpdated != NULL){
+    onTextUpdated(val);
   }
 }
 
@@ -42,8 +44,8 @@ void colorCharacteristicWritten(BLEDevice central, BLECharacteristic characteris
   String val = textCharacteristic.value();
   Serial.print("Color Characteristic event, written: " + val);
 
-  if(attributesListener != NULL){
-    attributesListener->onAttributesUpdated(Attributes(val));
+  if(onAttributesUpdated != NULL){
+    onAttributesUpdated(Attributes(val));
   }
 }
 
@@ -78,27 +80,16 @@ void BleManager::scan(){
   BLE.poll();
 }
 
-void BleManager::setConnectionListener(ConnectionListener* listener){
-  connectionListener = listener;
+void BleManager::setConnectionListener(void (&connected)(), void (&disconnected)(), void (&scanStarted)()){
+  onConnected = connected;
+  onDisconnected = disconnected;
+  onScanStarted = scanStarted;
 }
 
-void BleManager::setAttributesUpdatedListener(AttributesUpdatedListener* listener){
-  attributesListener = listener;
+void BleManager::setAttributesUpdatedListener(void (&attributesUpdated)(Attributes)){
+  onAttributesUpdated = attributesUpdated;
 }
 
-void BleManager::setTextUpdatedListener(TextUpdatedListener* listener){
-  textListener = listener;
+void BleManager::setTextUpdatedListener(void (&textUpdated)(String)){
+  onTextUpdated = textUpdated;
 }
-
-TextUpdatedListener::TextUpdatedListener(void (&onTextUpdated)(String)){}
-
-void TextUpdatedListener::onTextUpdated(String newText){}
-
-AttributesUpdatedListener::AttributesUpdatedListener(void (&onAttributesUpdated)(Attributes)) {}
-
-void AttributesUpdatedListener::onAttributesUpdated(Attributes newVals) {}
-
-ConnectionListener::ConnectionListener(void (&onConnected)(), void (&onDisconnected)(), void (&onScanStarted)()) {}
-void ConnectionListener::onConnected() {}
-void ConnectionListener::onDisconnected() {}
-void ConnectionListener::onScanStarted() {}
