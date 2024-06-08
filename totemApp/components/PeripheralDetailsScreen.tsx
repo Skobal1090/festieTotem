@@ -53,7 +53,7 @@ const PeripheralDetailsScreen = ({navigation, route}: Props) => {
 
   return (
     <View>
-      <TextInput placeholder='Say it wit yo chest' value={totemText} onChangeText={text => setTotemText(text)}/>
+      <TextInput placeholder='Say it wit yo chest' style={{color:"black"}} placeholderTextColor="black" value={totemText} onChangeText={text => setTotemText(text)}/>
       <Button title="Let the people know" onPress={() => writeData(totemText)}/>
     </View>
   );
