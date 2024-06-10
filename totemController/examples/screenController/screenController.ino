@@ -1,11 +1,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
-#include "colorInterpolator.h"
-#include "solidColorProvider.h"
-#include "colorProvider.h"
-#include "randomColorProvider.h"
-#include "twoColorSwapProvider.h"
+#include "totemHeaders.h"
 #ifndef PSTR
  #define PSTR // Make Arduino Due happy
 #endif
@@ -63,7 +59,7 @@ int x    = matrix.width();
 int pass = 0;
 
 int target = 1;
-String inputText = "This randomly breaks";
+String inputText = "Ayeeeeeeeeeeeeeeeee";
 
 void loop() {
   matrix.fillScreen(0);

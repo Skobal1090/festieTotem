@@ -5,11 +5,10 @@ static BLEService totemService("6364e354-24f2-4048-881f-4943362d34d7"); // creat
 
 // create switch characteristic and allow remote device to read and write
 static BLEStringCharacteristic textCharacteristic("7504932b-317e-4bb8-9998-5d2f5f3d18b3", BLERead | BLEWrite, 512);
-static BLEStringCharacteristic colorCharacteristic("0a704fd3-5dba-4194-9f40-ac8e2ab4ff06", BLERead | BLEWrite, 512);
+static BLEByteCharacteristic attributesCharacteristic("0a704fd3-5dba-4194-9f40-ac8e2ab4ff06", BLERead | BLEWrite, 512);
 
 static void (*onConnected)();
 static void (*onDisconnected)();
-static void (*onScanStarted)();
 static void (*onAttributesUpdated)(Attributes);
 static void (*onTextUpdated)(String);
 
@@ -40,9 +39,9 @@ void textCharacteristicWritten(BLEDevice central, BLECharacteristic characterist
   }
 }
 
-void colorCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
-  String val = textCharacteristic.value();
-  Serial.print("Color Characteristic event, written: " + val);
+void attributesCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
+  uint8_t* val = attributesCharacteristic.value();
+  Serial.print("Attribute characteristic event, written: " + val);
 
   if(onAttributesUpdated != NULL){
     onAttributesUpdated(Attributes(val));
@@ -59,7 +58,7 @@ void BleManager::init(){
   BLE.setLocalName("Pineapple Fox");
   BLE.setAdvertisedService(totemService);
   totemService.addCharacteristic(textCharacteristic);
-  totemService.addCharacteristic(colorCharacteristic);
+  totemService.addCharacteristic(attributesCharacteristic);
 
   BLE.addService(totemService);
 
@@ -69,8 +68,10 @@ void BleManager::init(){
   textCharacteristic.setEventHandler(BLEWritten, textCharacteristicWritten);
   textCharacteristic.setValue("Ready to rage");
 
-  colorCharacteristic.setEventHandler(BLEWritten, colorCharacteristicWritten);
-  colorCharacteristic.setValue("0,0,0");
+  attributesCharacteristic.setEventHandler(BLEWritten, attributesCharacteristicWritten);
+  attributesCharacteristic.setValue("0,0,0");
+
+
 
   BLE.advertise();
   Serial.println(("Totem on the prowl..."));
@@ -80,10 +81,9 @@ void BleManager::scan(){
   BLE.poll();
 }
 
-void BleManager::setConnectionListener(void (&connected)(), void (&disconnected)(), void (&scanStarted)()){
+void BleManager::setConnectionListener(void (&connected)(), void (&disconnected)()){
   onConnected = connected;
   onDisconnected = disconnected;
-  onScanStarted = scanStarted;
 }
 
 void BleManager::setAttributesUpdatedListener(void (&attributesUpdated)(Attributes)){
