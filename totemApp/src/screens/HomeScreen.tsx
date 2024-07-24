@@ -1,10 +1,14 @@
 import { useEffect } from "react";
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, Pressable, Text, StyleSheet, FlatList } from 'react-native';
 import PeripheralComponent from "../components/PeripheralComponent";
 import useBluetooth from "../hooks/useBluetooth";
 import { Peripheral } from "react-native-ble-manager";
+import { RootStackParamList } from "../../App";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export default function Home(){
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+export default function Home({ navigation } : Props){
     const btManager = useBluetooth();
 
     useEffect(() => {
@@ -27,11 +31,47 @@ export default function Home(){
         doSearch();
     }, [btManager.associatedPeripherals]);
 
-    const renderPeripheral = ({ item } : { item : [string, Peripheral]}) => <PeripheralComponent data={item[1]} onPress={() => btManager.connectPeripheral(item[1])} />;
+    const connectDevice = async (periph: Peripheral) => {
+        var info = await btManager.connectPeripheral(periph);
+
+        if(info == null)
+            return;
+        
+        console.log("navigating to details");
+        navigation.navigate('PeripheralDetails', {
+          peripheralData: info,
+        });
+    }
+
+    const clearConnections = async () => {
+        var devices = await btManager.retrieveConnected();
+
+        let data : Peripheral;
+
+        data = devices[0];
+
+        for(let i = 0; i < devices.length; i++){
+            await btManager.disconnectPeripheral(devices[i]);
+        }
+    };
+
+    const renderPeripheral = ({ item } : { item : [string, Peripheral]}) => <PeripheralComponent data={item[1]} onPress={() => connectDevice(item[1])} />;
 
     return (
     <View style={styles.container}>
         <FlatList data={[...btManager.peripherals]} renderItem={renderPeripheral} />
+        <Pressable style={styles.button} onPress={() => btManager.startCompanionScan()}>
+            <Text style={styles.buttonLabel}>Initial Scan</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => btManager.startScan()}>
+            <Text style={styles.buttonLabel}>Scan for totem</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => btManager.getAssociatedPeripherals()}>
+            <Text style={styles.buttonLabel}>List previously discovered</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => clearConnections()}>
+            <Text style={styles.buttonLabel}>Cleanup Connections</Text>
+        </Pressable>
     </View>
     );
 }
