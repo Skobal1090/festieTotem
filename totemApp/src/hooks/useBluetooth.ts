@@ -233,12 +233,12 @@ export default function useBluetooth (){
     }
   };
 
-  const retrieveConnected = async () => {
+  const retrieveConnected = async () : Promise<Peripheral[]> => {
     try {
       const connectedPeripherals = await BleManager.getConnectedPeripherals();
       if (connectedPeripherals.length === 0) {
         console.warn('[retrieveConnected] No connected peripherals found.');
-        return;
+        return [];
       }
 
       console.debug(
@@ -246,21 +246,13 @@ export default function useBluetooth (){
         connectedPeripherals,
       );
 
-      for (let peripheral of connectedPeripherals) {
-        setPeripherals(map => {
-          let p = map.get(peripheral.id);
-          if (p) {
-            p.connected = true;
-            return new Map(map.set(p.id, p));
-          }
-          return map;
-        });
-      }
+      return connectedPeripherals;
     } catch (error) {
       console.error(
         '[retrieveConnected] unable to retrieve connected peripherals.',
         error,
       );
+      return [];
     }
   }
 

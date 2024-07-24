@@ -43,12 +43,6 @@ void setup(){
   Serial.begin(9600);
   while (!Serial);
 
-  manager.setConnectionListener(onConnected, onDisconnected);
-  manager.setAttributesUpdatedListener(onAttributesUpdated);
-  manager.setTextUpdatedListener(onTextUpdated);
-
-  manager.init();
-
   Serial.begin(9600);
   while(!Serial);
   matrix.begin();
@@ -73,7 +67,6 @@ void setup(){
 }
 
 void loop(){
-  manager.scan();
 
   matrix.fillScreen(0);
   matrix.setCursor(x,3);
